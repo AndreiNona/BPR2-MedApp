@@ -13,15 +13,12 @@ public class CleanableObject : MonoBehaviour
 
     void Update()
     {
-        // Only allow getting dirty if the object is still cleanable
+        
         if (inContactWithDirty && isCleanable)
         {
             dirtTimer += Time.deltaTime;
-            // Check if the dirty object has been stored and if the timer surpasses the threshold to become dirty
             if (_storedDirtyObject != null && dirtTimer >= _storedDirtyObject.timeToMakeDirty)
-            {
                 BecomeDirty();
-            }
         }
     }
     private void OnCollisionStay(Collision collision)
@@ -51,7 +48,7 @@ public class CleanableObject : MonoBehaviour
         if (isCleanable && !isClean)
         {
             isClean = true;
-            isCleanable = false;  // Once cleaned, it cannot become dirty again.
+            isCleanable = false;  
             Debug.Log($"{gameObject.name} has been cleaned and can no longer become dirty.");
         }
     }

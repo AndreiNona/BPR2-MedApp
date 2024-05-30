@@ -18,15 +18,15 @@ public class ResetPosition : MonoBehaviour
 
     void Start()
     {
-        // Store the original transform data of the main object
+        // Store the original transform 
         _originalTransform.Position = transform.position;
         _originalTransform.Rotation = transform.rotation;
         
-        // Initialize the dictionary to store original transforms of child objects
+        // Initialize the dictionary to store original transforms of children
         _originalChildTransforms = new Dictionary<Transform, TransformData>();
         _childRigidbodies = new List<Rigidbody>();
 
-        // Get all child objects and store their original transform data
+        // Get all child objects and store their original transform
         foreach (Transform child in transform.GetComponentsInChildren<Transform>())
         {
             if (child != transform) // Skip the parent object
@@ -61,11 +61,11 @@ public class ResetPosition : MonoBehaviour
     {
         Debug.Log("Resetting to original position");
 
-        // Reset the main object's position and rotation
+        // Reset the main 
         transform.position = _originalTransform.Position;
         transform.rotation = _originalTransform.Rotation;
 
-        // Reset the main object's Rigidbody
+        // Reset the main object Rigidbody
         if (_rigidbody != null)
         {
             _rigidbody.velocity = Vector3.zero;
@@ -76,14 +76,14 @@ public class ResetPosition : MonoBehaviour
             Debug.LogWarning("Rigidbody component is missing. Cannot reset momentum and rotational speed.");
         }
 
-        // Reset each child object's position and rotation
+        // Reset each child
         foreach (var kvp in _originalChildTransforms)
         {
             kvp.Key.position = kvp.Value.Position;
             kvp.Key.rotation = kvp.Value.Rotation;
         }
 
-        // Reset each child object's Rigidbody
+        // Reset each child object Rigidbody
         foreach (var childRigidbody in _childRigidbodies)
         {
             childRigidbody.velocity = Vector3.zero;

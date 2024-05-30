@@ -63,11 +63,6 @@ public class RoomSelector : MonoBehaviour
         // Initialize to load main room on start
         ActivateRoom(defaultRooms[0]); // Assuming main room is the first in the array
     }
-    void InitializeDropdown(TMP_Dropdown dropdown, List<string> options)
-    {
-        dropdown.ClearOptions();
-        dropdown.AddOptions(options);
-    }
     List<string> ConvertToDropdownList(GameObject[] rooms)
     {
         List<string> roomNames = new List<string> { "Select a Room" };
@@ -77,6 +72,12 @@ public class RoomSelector : MonoBehaviour
         }
         return roomNames;
     }
+    void InitializeDropdown(TMP_Dropdown dropdown, List<string> options)
+    {
+        dropdown.ClearOptions();
+        dropdown.AddOptions(options);
+    }
+    
     private void ChangeRoom(TMP_Dropdown dropdown, GameObject[] roomArray, int index)
     {
         if (gameManager.isRoomLocked)
@@ -104,7 +105,7 @@ public class RoomSelector : MonoBehaviour
         dropdownTheory.onValueChanged.RemoveListener(index => ChangeRoom(dropdownTheory, theoryRooms, index));
         dropdownPractice.onValueChanged.RemoveListener(index => ChangeRoom(dropdownPractice, practiceRooms, index));
 
-        // Reset dropdowns to their default value
+        // Reset dropdowns to default value
         if (activeDropdown != dropdownDefault)
         {
             dropdownDefault.value = 0;

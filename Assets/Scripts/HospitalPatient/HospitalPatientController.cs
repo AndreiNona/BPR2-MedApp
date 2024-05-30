@@ -120,7 +120,7 @@ public class HospitalPatientController : MonoBehaviour
     public void ResetToDefaultPosture()
     {
         animationController.ResetPosture();
-        // Call ResetToDefaultIdleState to ensure the animation state is reset to idle
+        // Animation state is reset to idle
         ResetToDefaultIdleState();
     }
 
@@ -167,25 +167,25 @@ public class HospitalPatientController : MonoBehaviour
             }
 
             if (foundMatchForCurrentName)
-                matchCount++;  // Increment match count since a tied attachment was found for this name
+                matchCount++;  
             else
             {
-                // Log that no matching attachment was found for the current name
+               
                 Debug.Log($"No tied attachment found with name: {attachmentName}.");
-                return false; // Return false as soon as any attachment name is not matched
+                return false; 
             }
         }
         // Check if the number of matches found equals the number of names provided
         if (matchCount == attachmentNames.Length)
-            return true; // Return true only if all provided names have a tied match
-        return false; // Safety condition, should ideally never be hit due to earlier checks
+            return true; 
+        return false; // Ideally never be hit due to earlier checks
 
     }
 
     private int[] GetVitals(string[] attachmentNames)
     {
         Debug.Log($"Attempting to get vitals with attachment: {attachmentNames}, Up: {_isUp}, Good Posture: {_hasGoodPosture}, Has Specific Attachment: {HasSpecificAttachment(attachmentNames)}");
-        // Check the conditions specifically for Up: False, Good Posture: True
+        // Check the conditions
         if (!_isUp && _hasGoodPosture && HasSpecificAttachment(attachmentNames))
         {
             Debug.Log($"Conditions met for {attachmentNames}: Up: {_isUp} (expected False), Good Posture: {_hasGoodPosture} (expected True)");
@@ -203,11 +203,13 @@ public class HospitalPatientController : MonoBehaviour
             if (vitals != null)
             {
                 Debug.Log($"Vitals received for {attachmentNames}: Systolic: {vitals[0]}, Diastolic: {vitals[1]}, Heart Rate: {vitals[2]}");
-                // Enable sliders if their values are not zero
+                
+                // Enable sliders
                 systolicSliderController.gameObject.SetActive(vitals[0] > 0);
                 diastolicSliderController.gameObject.SetActive(vitals[1] > 0);
                 heartRateSliderController.gameObject.SetActive(vitals[2] > 0);
-                // Update each slider with its respective value
+                
+                // Update sliders
                 systolicSliderController.AnimateSlider(vitals[0] / (float)vitalsSimulator.GetMaxSystolicPressure(), vitals[0]);
                 diastolicSliderController.AnimateSlider(vitals[1] / (float)vitalsSimulator.GetMaxDiastolicPressure(), vitals[1]);
                 heartRateSliderController.AnimateSlider(vitals[2] / (float)vitalsSimulator.GetMaxHeartRate(), vitals[2]);
@@ -243,31 +245,9 @@ public class HospitalPatientController : MonoBehaviour
         savedIsUp = _isUp;
         savedHasGoodPosture = _hasGoodPosture;
         savedIsComplaining = isComplaining;
-
-        // Save animation state if needed
-    }
-
-    // New method to restore the saved state
-    private void RestoreState()
-    {
-        _isUp = savedIsUp;
-        _hasGoodPosture = savedHasGoodPosture;
-        isComplaining = savedIsComplaining;
-
-        tieToObjectPositions.Clear();
-        InitializeTieScripts();
-        UpdatePostureBasedOnState();
-        
-        // Restore animation state if needed
     }
     private void OnDisable()
     {
         SaveState();
-    }
-
-    // Override OnEnable to restore state when reactivating
-    private void OnEnable()
-    {
-        RestoreState();
     }
 }

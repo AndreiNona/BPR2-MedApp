@@ -83,13 +83,13 @@ public class PatientAnimationController : MonoBehaviour
         }
     }
 
-    // Added method to check if the patient is sitting
+ 
     public bool IsSitting()
     {
         return postureState == PostureState.Sitting;
     }
 
-    // Direct methods to set the states
+
     public void SetPostureState(PostureState state)
     {
         postureState = state;

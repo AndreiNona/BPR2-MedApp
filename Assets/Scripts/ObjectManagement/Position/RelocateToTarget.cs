@@ -28,8 +28,6 @@ public class RelocateToTarget : MonoBehaviour
                     Debug.Log("Relocating:" + target.gameObject.name);
                     target.transform.position = location.transform.position;
                     target.transform.rotation = location.rotation;
-                   //target.transform.rotation =quaternion.Euler(-20,0,0);
-                    //Prevent error when relocating composite objects
                     try
                     {
                         target.GetComponent<Rigidbody>().velocity = Vector3.zero;

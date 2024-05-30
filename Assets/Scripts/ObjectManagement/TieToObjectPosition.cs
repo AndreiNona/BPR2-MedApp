@@ -25,12 +25,13 @@ public class TieToObjectPosition : MonoBehaviour
     private Vector3 _originalPosition;
     private Quaternion _originalRotation;
     
-    public XRBaseInteractable tiedObject;  // The object to tie
-    public Transform tiePosition;          // Position to tie the object to
-    public float regrabDelay = 2.0f;       // Time in seconds before the object can be retied
+    private XRBaseInteractable _tiedObject;  
+    private Transform _tiePosition; 
+    [SerializeField, Tooltip("Time in seconds before the object can be retied")]
+    private float regrabDelay = 2.0f;       // Time in seconds before the object can be retied
 
     public bool isTied { get; private set; }
-    private bool isLocked = false;
+    private bool _isLocked = false;
     private bool _isDelayActive = false;
 
     private void Awake()
@@ -42,11 +43,11 @@ public class TieToObjectPosition : MonoBehaviour
 
     void Update()
     {
-        if (isTied && tiedObject != null)
+        if (isTied && _tiedObject != null)
         {
-            var transform1 = tiedObject.transform;
-            transform1.position = tiePosition.position;
-            transform1.rotation = tiePosition.rotation;
+            var transform1 = _tiedObject.transform;
+            transform1.position = _tiePosition.position;
+            transform1.rotation = _tiePosition.rotation;
         }
     }
     private void InitializeOrientations()
@@ -68,18 +69,18 @@ public class TieToObjectPosition : MonoBehaviour
             XRBaseInteractable interactable = other.GetComponent<XRBaseInteractable>();
             if (interactable != null)
             {
-                tiedObject = interactable;
-                var transform1 = tiedObject.transform;
+                _tiedObject = interactable;
+                var transform1 = _tiedObject.transform;
                 _originalPosition = transform1.position;
                 _originalRotation = transform1.rotation;
 
                 // Subscribe to the select events
-                tiedObject.selectEntered.AddListener(HandleSelectEntered);
-                tiedObject.selectExited.AddListener(HandleSelectExited);
+                _tiedObject.selectEntered.AddListener(HandleSelectEntered);
+                _tiedObject.selectExited.AddListener(HandleSelectExited);
                 
                 var transform2 = transform;
-                tiedObject.transform.position = tiePosition.position;
-                tiedObject.transform.rotation = tiePosition.rotation * GetCurrentOrientation();
+                _tiedObject.transform.position = _tiePosition.position;
+                _tiedObject.transform.rotation = _tiePosition.rotation * GetCurrentOrientation();
                 isTied = true;
             }
         }
@@ -87,7 +88,7 @@ public class TieToObjectPosition : MonoBehaviour
     
     private void HandleSelectEntered(SelectEnterEventArgs args)
     {
-        if (isTied && args.interactor is XRDirectInteractor && !isLocked)  // Check the isLocked flag
+        if (isTied && args.interactor is XRDirectInteractor && !_isLocked)  // Check the isLocked flag
         {
             Debug.Log("Object was grabbed by an XR Direct Interactor.");
 
@@ -101,11 +102,11 @@ public class TieToObjectPosition : MonoBehaviour
                 _currentOrientationIndex = 1;  // Always reset to the correct orientation
             }
             // Unsubscribe to prevent memory leaks
-            tiedObject.selectEntered.RemoveListener(HandleSelectEntered);
-            tiedObject.selectExited.RemoveListener(HandleSelectExited);
+            _tiedObject.selectEntered.RemoveListener(HandleSelectEntered);
+            _tiedObject.selectExited.RemoveListener(HandleSelectExited);
 
-            tiedObject = null;
-            // Start the re-grab delay coroutine
+            _tiedObject = null;
+            // Start the re-grab delay 
             StartCoroutine(RegrabDelayCoroutine());
         }
     }
@@ -125,7 +126,7 @@ public class TieToObjectPosition : MonoBehaviour
     
     public bool IsObjectCorrectlyPositioned()
     {
-        if (tiedObject == null || !isTied)
+        if (_tiedObject == null || !isTied)
         {
             return false;
         }
@@ -135,20 +136,20 @@ public class TieToObjectPosition : MonoBehaviour
     }
     public void LockObject()
     {
-        isLocked = true;
+        _isLocked = true;
     }
 
     public void UnlockObject()
     {
-        isLocked = false;
+        _isLocked = false;
     }
     void OnDestroy()
     {
         // Unsubscribe to prevent memory leaks
-        if (tiedObject != null)
+        if (_tiedObject != null)
         {
-            tiedObject.selectEntered.RemoveListener(HandleSelectEntered);
-            tiedObject.selectExited.RemoveListener(HandleSelectExited);
+            _tiedObject.selectEntered.RemoveListener(HandleSelectEntered);
+            _tiedObject.selectExited.RemoveListener(HandleSelectExited);
         }
     }
 }

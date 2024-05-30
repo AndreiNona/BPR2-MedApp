@@ -7,6 +7,6 @@ public class RoomData : ScriptableObject
 {
     public string roomName;
     public List<string> dropdownItems;
-    public GameObject[] roomPrefabs; // Array of GameObjects to spawn for the room
+    public GameObject[] roomPrefabs; // Array of GameObjects to spawn
     public List<GameObject> requiredTools;
 }

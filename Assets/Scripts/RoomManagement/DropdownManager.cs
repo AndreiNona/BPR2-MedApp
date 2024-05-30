@@ -11,7 +11,7 @@ public class DropdownManager : MonoBehaviour
     [SerializeField] private Transform location;
     
     public TMP_Dropdown dropdown;
-    public List<RoomData> roomDatas;  // List of all room data scriptable objects
+    public List<RoomData> roomDatas;  // List of all room data objects
 
     
     public RoomData currentRoomData{ get; private set; }
@@ -56,7 +56,7 @@ public class DropdownManager : MonoBehaviour
         int prefabIndex = index - 1;
         if (prefabIndex < 0 || prefabIndex >= currentRoomData.roomPrefabs.Length)
         {
-            if (prefabIndex != -1)  // Assuming -1 is the "Select an item..." index
+            if (prefabIndex != -1)  // -1 is the "Select an item..." index
             {
                 Debug.LogError("Selected index is out of range or not selectable.");
                 return;
@@ -70,7 +70,7 @@ public class DropdownManager : MonoBehaviour
         GameObject newObject = Instantiate(prefab, location.position, location.rotation);
         newObject.name = prefab.name;
 
-        // Update dictionary with prefab name instead of GameObject
+        // Update dictionary with prefab name
         string prefabName = prefab.name;
         if (currentRoomData.requiredTools.Contains(prefab))
         {
@@ -84,39 +84,6 @@ public class DropdownManager : MonoBehaviour
         Debug.Log("Created: " + newObject.name);
         StartCoroutine(ResetDropdown());
     }
-
-    private IEnumerator ResetDropdown()
-    {
-        yield return null; // Wait for the end of the frame
-        dropdown.value = 0; // Reset to non-selectable prompt
-        dropdown.RefreshShownValue();
-    }
-
-    public void DecreaseToolCount(GameObject prefab)
-    {
-        string prefabName = prefab.name; // Assuming this is unique
-        Debug.Log($"Try to decrease count of {prefabName}, instance ID: {prefab.GetInstanceID()}");
-
-        if (requiredToolCounts.ContainsKey(prefabName) && requiredToolCounts[prefabName] > 0)
-        {
-            requiredToolCounts[prefabName]--;
-            Debug.Log($"Decreased count of {prefabName} to {requiredToolCounts[prefabName]}");
-        }
-        else
-        {
-            Debug.Log("Prefab not found in dictionary or count is zero.");
-            Debug.Log("Current keys in dictionary:");
-            foreach (var key in requiredToolCounts.Keys)
-            {
-                Debug.Log($"Key: {key}");
-            }
-        }
-    }
-    public Dictionary<string, int> GetRequiredToolCounts()
-    {
-        return requiredToolCounts;
-    }
-
     private void ClearCurrentRoomObjects()
     {
         foreach (GameObject prefab in currentRoomData.roomPrefabs)
@@ -158,7 +125,38 @@ public class DropdownManager : MonoBehaviour
     }
     private void ToggleDropdownVisibility()
     {
-        // Set active state based on whether there are any options
+        // Set active state 
         dropdown.gameObject.SetActive(dropdown.options.Count > 0);
     }
+    private IEnumerator ResetDropdown()
+    {
+        yield return null; // Wait for the end of the frame
+        dropdown.value = 0; // Reset to non-selectable prompt
+        dropdown.RefreshShownValue();
+    }
+    public void DecreaseToolCount(GameObject prefab)
+    {
+        string prefabName = prefab.name; // Assuming this is unique
+        Debug.Log($"Try to decrease count of {prefabName}, instance ID: {prefab.GetInstanceID()}");
+
+        if (requiredToolCounts.ContainsKey(prefabName) && requiredToolCounts[prefabName] > 0)
+        {
+            requiredToolCounts[prefabName]--;
+            Debug.Log($"Decreased count of {prefabName} to {requiredToolCounts[prefabName]}");
+        }
+        else
+        {
+            Debug.Log("Prefab not found in dictionary or count is zero.");
+            Debug.Log("Current keys in dictionary:");
+            foreach (var key in requiredToolCounts.Keys)
+            {
+                Debug.Log($"Key: {key}");
+            }
+        }
+    }
+    public Dictionary<string, int> GetRequiredToolCounts()
+    {
+        return requiredToolCounts;
+    }
+    
 }

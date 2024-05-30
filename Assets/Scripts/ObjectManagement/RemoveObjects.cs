@@ -61,7 +61,7 @@ public class RemoveObjects : MonoBehaviour
         if(isPrompt)
             prompt.text = PickRandomString(feedbackPositiveList);
 
-        // Get the root parent of the GameObject to ensure all parts of a composite object are removed
+        // Get the root parent of the GameObject
         GameObject rootObject = obj.transform.root.gameObject;
 
         if (dropdownManager != null)
@@ -70,7 +70,7 @@ public class RemoveObjects : MonoBehaviour
             dropdownManager.DecreaseToolCount(rootObject);
         }
 
-        // Destroy the root object which will automatically destroy all children
+        // Destroy the root object 
         Destroy(rootObject);
         Debug.Log($"Destroyed: {rootObject.name}");
     }

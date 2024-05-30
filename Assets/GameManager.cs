@@ -26,6 +26,8 @@ public class GameManager : MonoBehaviour
 
     //TODO: Replace with new room lock system
     public bool isRoomLocked = false;
+    
+    
     void Awake()
     {
         if (instance == null)
@@ -42,40 +44,6 @@ public class GameManager : MonoBehaviour
     {
         StartCoroutine(WaitForDialogManager());
     }
-
-
-    // ReSharper disable Unity.PerformanceAnalysis
-    IEnumerator WaitForDialogManager() {
-
-        while (FindFirstObjectByType<DialogManager>() == null) {
-            yield return null; 
-        }
-        dialogManager = FindFirstObjectByType<DialogManager>();
-        dialogManager.InitializeDialogNodes();
-        dialogManager.ShowDialogNode(0); 
-    }
-
-    public void UpdateTieToObjectPositions(List<TieToObjectPosition> tiePositions)
-    {
-        tieScripts = tiePositions;
-        Debug.Log($"Updated GameManager with {tiePositions.Count} tie positions.");
-    }
-
-    public void PreparePatient(string actionName)
-    {
-        Debug.Log($"PreparePatient called with: {actionName}");
-        switch (actionName)
-        {
-            case "PreparePatient":
-                CheckPatient();
-                break;
-            case "PrepTools":
-                CheckTools();
-                break;
-        }
-        HandleDialogBasedOnPreparation();
-    }
-
     private void CheckPatient()
     {
         Debug.Log("CheckPatient called");
@@ -86,7 +54,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-private void CheckTools()
+    private void CheckTools()
 {
     RoomData currentRoomData = dropdownManager.currentRoomData;
     Dictionary<string, int> toolCounts = dropdownManager.GetRequiredToolCounts();
@@ -136,8 +104,8 @@ private void CheckTools()
     Debug.Log($"_areToolsClean: {_areToolsClean}");
 }
 
-// Helper method to find an instance of a tool by its name in the scene
-private GameObject FindToolInstanceByName(string toolName)
+    // Helper method to find an instance of a tool by name
+    private GameObject FindToolInstanceByName(string toolName)
 {
     GameObject[] allTools = GameObject.FindGameObjectsWithTag("Tool"); // Assuming all tools are tagged "Tool"
     foreach (var tool in allTools)
@@ -147,33 +115,68 @@ private GameObject FindToolInstanceByName(string toolName)
     }
     return null;
 }
-
     private void HandleDialogBasedOnPreparation()
+{
+    switch (_isPatientPrep)
     {
-        switch (_isPatientPrep)
+        case false when !_isToolPrep:
+            Debug.Log("HandleDialogBasedOnPreparation: do nothing");
+            break;
+        case true when _isToolPrep:
+            dialogManager.ShowDialogNode(7);
+            Debug.Log("Both preparations complete. Moving to node 7.");
+            break;
+        case false:
+            dialogManager.ShowDialogNode(5);
+            Debug.Log("Patient is not ready. Moving to node 5.");
+            break;
+        default:
         {
-            case false when !_isToolPrep:
-                Debug.Log("HandleDialogBasedOnPreparation: do nothing");
-                break;
-            case true when _isToolPrep:
-                dialogManager.ShowDialogNode(7);
-                Debug.Log("Both preparations complete. Moving to node 7.");
-                break;
-            case false:
-                dialogManager.ShowDialogNode(5);
-                Debug.Log("Patient is not ready. Moving to node 5.");
-                break;
-            default:
+            if (!_isToolPrep)
             {
-                if (!_isToolPrep)
-                {
-                    dialogManager.ShowDialogNode(6);
-                    Debug.Log("Tools are not ready. Moving to node 6.");
-                }
-                break;
+                dialogManager.ShowDialogNode(6);
+                Debug.Log("Tools are not ready. Moving to node 6.");
             }
+            break;
         }
     }
+}
+
+    // ReSharper disable Unity.PerformanceAnalysis
+    IEnumerator WaitForDialogManager() {
+
+        while (FindFirstObjectByType<DialogManager>() == null) {
+            yield return null; 
+        }
+        dialogManager = FindFirstObjectByType<DialogManager>();
+        dialogManager.InitializeDialogNodes();
+        dialogManager.ShowDialogNode(0); 
+    }
+    public void GeneratePatientVitals(string[] attachmentNames)
+    {
+        patientController.UpdateVitalsAndSliders(attachmentNames);
+    }
+    public void UpdateTieToObjectPositions(List<TieToObjectPosition> tiePositions)
+    {
+        tieScripts = tiePositions;
+        Debug.Log($"Updated GameManager with {tiePositions.Count} tie positions.");
+    }
+
+    public void PreparePatient(string actionName)
+    {
+        Debug.Log($"PreparePatient called with: {actionName}");
+        switch (actionName)
+        {
+            case "PreparePatient":
+                CheckPatient();
+                break;
+            case "PrepTools":
+                CheckTools();
+                break;
+        }
+        HandleDialogBasedOnPreparation();
+    }
+    
     public void ManageAttachable(string objectName, bool desiredState, int targetNode, int failNode, int badPosNode)
     {
         bool isCuffPlaced = false;
@@ -210,13 +213,6 @@ private GameObject FindToolInstanceByName(string toolName)
             script.UnlockObject();
         }
     }
-
-    public void GeneratePatientVitals(string[] attachmentNames)
-    {
-        patientController.UpdateVitalsAndSliders(attachmentNames);
-    }
-
-    
     public void PatientPosture(string postureName)
     {
         switch (postureName)

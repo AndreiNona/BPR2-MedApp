@@ -26,8 +26,7 @@ public class SliderController : MonoBehaviour
         {
             slider = GetComponent<Slider>();
         }
-
-        // Initialize slider and text with default values
+        
         slider.value = 0;
         displayText.text = "0";
         UpdateSliderColor(slider.value);
@@ -62,9 +61,7 @@ public class SliderController : MonoBehaviour
         displayText.text = targetTextValue.ToString();
         UpdateSliderColor(slider.value);
     }
-
-
-    // Method to update the slider's color based on its current value
+    
     private void UpdateSliderColor(float value)
     {
         float percentage = (value - slider.minValue) / (slider.maxValue - slider.minValue);

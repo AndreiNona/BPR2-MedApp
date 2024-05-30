@@ -14,30 +14,28 @@ public class PatientVitalsSimulator : MonoBehaviour
     private int systolicPressure { get; set; }
     private int diastolicPressure { get; set; }
     private int heartRate { get; set; }
-
-    // Use this for initialization
+    
     void Start()
     {
         GenerateNewVitals();
     }
 
     //TODO: Test
-    // Method to simulate generating new vital signs
     public int[] GenerateNewVitals()
     {
-        // Randomly generate systolic blood pressure (SBP)
+        // Generate systolic blood pressure (SBP)
         systolicPressure = Random.Range(90, maxSystolic);
 
-        // Generate diastolic blood pressure (DBP) based on SBP and an average correlation (r)
-        float correlationCoefficient = 0.74f; // Average correlation coefficient from your data
-        float stdDev = 0.14f; // Standard deviation in the correlation
+        // Generate diastolic blood pressure (DBP) based on SBP
+        float correlationCoefficient = 0.74f; // Average correlation coefficient 
+        float stdDev = 0.14f; // Standard deviation 
         float randomCorrelation = Random.Range(correlationCoefficient - stdDev, correlationCoefficient + stdDev);
         
-        // Calculating the diastolic pressure using the relationship observed
+        // Calculating the diastolic pressure 
         int expectedDiastolic = Mathf.RoundToInt((diastolicPressure + randomCorrelation * (systolicPressure - diastolicPressure)));
         diastolicPressure = Mathf.Clamp(expectedDiastolic, 60, maxDiastolic); // Clamping to ensure within expected range
 
-        // Randomly generate heart rate
+        // Generate heart rate
         heartRate = Random.Range(60, maxHeartRate);
 
         return new int[] { systolicPressure, diastolicPressure, heartRate };
@@ -47,7 +45,7 @@ public class PatientVitalsSimulator : MonoBehaviour
     {
         return new int[] {systolicPressure, diastolicPressure, heartRate};
     }
-    // Methods to get the current vital signs
+   
     public int GetCurrentSystolicPressure()
     {
         return systolicPressure;
@@ -62,7 +60,7 @@ public class PatientVitalsSimulator : MonoBehaviour
     {
         return heartRate;
     }
-    // Methods to get the current vital signs
+
     public int GetMaxSystolicPressure()
     {
         return maxSystolic;

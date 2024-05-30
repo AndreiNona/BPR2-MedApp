@@ -14,12 +14,12 @@ public class HapticArea : MonoBehaviour
 
     void Start()
     {
-        // Find the HospitalPatientController in the parent hierarchy
+        // Find the HospitalPatientController
         patientController = GetComponentInParent<HospitalPatientController>();
 
         if (patientController == null)
         {
-            Debug.LogError("HospitalPatientController not found in the parent hierarchy.");
+            Debug.LogError("HospitalPatientController not found in the hierarchy.");
         }
     }
 
@@ -43,7 +43,7 @@ public class HapticArea : MonoBehaviour
     {
         Debug.Log("OnTriggerEnter called with: " + other.gameObject.name);
 
-        // Try to get the XRBaseController from various components in the hierarchy
+        // Try to get the XRBaseController 
         XRDirectInteractor directInteractor = other.GetComponentInParent<XRDirectInteractor>();
         XRRayInteractor rayInteractor = other.GetComponentInParent<XRRayInteractor>();
 
